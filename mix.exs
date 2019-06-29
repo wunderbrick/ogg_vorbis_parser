@@ -5,6 +5,7 @@ defmodule OggVorbisParser.MixProject do
     [
       app: :ogg_vorbis_parser,
       name: "OggVorbisParser",
+      source_url: "https://github.com/wunderbrick/ogg_vorbis_parser",
       description: description(),
       licenses: "MIT License",
       version: "0.1.0",
