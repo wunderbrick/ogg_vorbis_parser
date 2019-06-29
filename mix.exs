@@ -28,7 +28,7 @@ defmodule OggVorbisParser.MixProject do
   defp package() do
     [
       # These are the default files included in the package
-      files: ~w(lib test .formatter.exs mix.exs README* LICENSE*),
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE*),
       licenses: ["MIT License"],
       links: %{"GitHub" => "https://github.com/wunderbrick/ogg_vorbis_parser"}
     ]
