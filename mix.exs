@@ -7,7 +7,7 @@ defmodule OggVorbisParser.MixProject do
       name: "OggVorbisParser",
       source_url: "https://github.com/wunderbrick/ogg_vorbis_parser",
       description: description(),
-      licenses: "MIT License",
+      package: package(),
       version: "0.1.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
@@ -25,10 +25,17 @@ defmodule OggVorbisParser.MixProject do
     "Parses VorbisComments in Ogg Vorbis files."
   end
 
-  defp deps do
+  defp package() do
     [
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+      # These are the default files included in the package
+      files: ~w(lib test .formatter.exs mix.exs README* LICENSE*),
+      licenses: ["MIT License"],
+      links: %{"GitHub" => "https://github.com/wunderbrick/ogg_vorbis_parser"}
+    ]
+  end
+
+  defp deps do
+    [ {:ex_doc, "~> 0.19", only: :dev, runtime: false},
     ]
   end
 end
