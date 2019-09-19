@@ -11,7 +11,7 @@ defmodule OggVorbisParser do
 
   This package uses a recursive function to look for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
 
-  Version 0.1.0's output wasn't very convenient so this package now gives back a map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
+  Version 0.1.0's output wasn't very convenient so this package now gives back a nested map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
   """
 
   @doc """
