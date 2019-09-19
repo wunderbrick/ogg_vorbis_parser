@@ -12,9 +12,9 @@ def deps do
     {:ogg_vorbis_parser, "~> 1.0.0"}
   ]
 end
+```
 
 Note that the "format" comment in the example below says MP3 because this Ogg file from archive.org was probably converted from an mp3. The actual mp3 is included too as shown below.
-```
 
 ## Examples
   ```elixir
