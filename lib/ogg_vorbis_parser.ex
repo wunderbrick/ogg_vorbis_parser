@@ -4,14 +4,14 @@ defmodule OggVorbisParser do
 
   While it's possible to use Vorbis streams without Ogg containers or with different kinds of containers,
   this parser expects Ogg. It might work for parsing the audio metadata in .ogv files, which are still Ogg containers
-  with video streams and Vorbis streams, but this hasn't been tested much.
+  with video streams and Vorbis streams, but this hasn't been tested enough.
 
   The relevant part of an Ogg Vorbis file starts with an Ogg capture pattern (a file signature) followed by some Ogg container bits,
   the Vorbis identification header, and the Vorbis comment header.
 
-  This package uses a recursive function to look for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
+  OggVorbisParser looks for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
 
-  Version 0.1.0's output wasn't very convenient so this package now gives back a nested map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
+  Version 0.1.0's output wasn't very convenient so parse/1 now gives back a nested map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
   """
 
   @doc """
