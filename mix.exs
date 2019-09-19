@@ -8,8 +8,8 @@ defmodule OggVorbisParser.MixProject do
       source_url: "https://github.com/wunderbrick/ogg_vorbis_parser",
       description: description(),
       package: package(),
-      version: "0.1.0",
-      elixir: "~> 1.8",
+      version: "1.0.0",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -35,7 +35,6 @@ defmodule OggVorbisParser.MixProject do
   end
 
   defp deps do
-    [ {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-    ]
+    [{:ex_doc, "~> 0.21.2", only: :dev, runtime: false}]
   end
 end

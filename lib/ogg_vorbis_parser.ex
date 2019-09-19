@@ -10,6 +10,8 @@ defmodule OggVorbisParser do
   the Vorbis identification header, and the Vorbis comment header.
 
   This package uses a recursive function to look for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
+
+  Version 0.1.0's output wasn't very convenient so this package now gives back a map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
   """
 
   @doc """
@@ -22,29 +24,33 @@ defmodule OggVorbisParser do
       iex> {:ok, binary} = OggVorbisParser.parse("test/audio_files/lifeandtimesoffrederickdouglass_01_douglass.ogg")
       iex> binary
       %{
-        comments: [
-          ["encoder", "Lavc55.68.101 libvorbis"],
-          ["artist", "Frederick Douglass"],
-          ["genre", "speech"],
-          ["title", "01 - Author's Birth"],
-          ["album", "Life and Times of Frederick Douglass"],
-          ["TRACKNUMBER", "2"],
-          ["encoder", "Lavf55.45.100"],
-          ["mtime", "1415249910"],
-          ["size", "5632957"],
-          ["md5", "4be053d1a643c55f155bc489e687f9c8"],
-          ["crc32", "965da915"],
-          ["sha1", "f85622a5998dde20e935fbcee782fcb39bbcdaa6"],
-          ["format", "128Kbps MP3"],
-          ["length", "351.76"],
-          ["height", "0"],
-          ["width", "0"],
-          ["source", "original"],
-          ["comment",
-           "http://archive.org/details/life_times_frederick_douglass_ls_1411_librivox"]
-        ],
-        vendor_string: "Lavf55.45.100"
+        "comments" => %{
+          "album" => "Life and Times of Frederick Douglass",
+          "artist" => "Frederick Douglass",
+          "comment" =>
+            "http://archive.org/details/life_times_frederick_douglass_ls_1411_librivox",
+          "crc32" => "965da915",
+          "encoder" => "Lavf55.45.100",
+          "format" => "128Kbps MP3",
+          "genre" => "speech",
+          "height" => "0",
+          "length" => "351.76",
+          "md5" => "4be053d1a643c55f155bc489e687f9c8",
+          "mtime" => "1415249910",
+          "sha1" => "f85622a5998dde20e935fbcee782fcb39bbcdaa6",
+          "size" => "5632957",
+          "source" => "original",
+          "title" => "01 - Author's Birth",
+          "tracknumber" => "2",
+          "vendor_string" => "Lavf55.45.100",
+          "width" => "0"
+        },
+        "vendor_string" => "Lavf55.45.100"
       }
+
+      iex> {:ok, binary} = OggVorbisParser.parse("test/audio_files/lifeandtimesoffrederickdouglass_01_douglass.ogg")
+      iex> binary["comments"]["title"]
+      "01 - Author's Birth"
 
       iex> {:error, err} = OggVorbisParser.parse("test/audio_files/lifeandtimesoffrederickdouglass_01_douglass_128kb.mp3")
       iex> err
@@ -88,10 +94,16 @@ defmodule OggVorbisParser do
         {rest, comment_list_length, vendor_string} =
           parse_matching_bitstring(bitstring, binary_size)
 
+        comments =
+          parse_comments(rest, [], comment_list_length)
+          |> Enum.map(fn [a, b] -> {String.downcase(a), b} end)
+          |> Map.new()
+          |> Map.put_new("vendor_string", vendor_string)
+
         {:ok,
          %{
-           comments: parse_comments(rest, [], comment_list_length),
-           vendor_string: vendor_string
+           "comments" => comments,
+           "vendor_string" => vendor_string
          }}
 
       binary_size >= 500 ->
