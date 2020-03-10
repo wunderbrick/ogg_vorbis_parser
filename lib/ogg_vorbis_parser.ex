@@ -2,20 +2,16 @@ defmodule OggVorbisParser do
   @moduledoc """
   A parser for VorbisComments in Ogg containers.
 
-  While it's possible to use Vorbis streams without Ogg containers or with different kinds of containers,
-  this parser expects Ogg. It might work for parsing the audio metadata in .ogv files, which are still Ogg containers
-  with video streams and Vorbis streams, but this hasn't been tested enough.
+  While it's possible to use Vorbis streams without Ogg containers or with different kinds of containers, this parser expects Ogg.
 
   The relevant part of an Ogg Vorbis file starts with an Ogg capture pattern (a file signature) followed by some Ogg container bits,
   the Vorbis identification header, and the Vorbis comment header. This package uses File.stream!/3 instead of File.read/1 to avoid loading entire audio files into memory.
 
   OggVorbisParser looks for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
-
-  Version 0.1.0's output wasn't very convenient so parse/1 now gives back a nested map. Convert string keys to atoms at your own risk. If you know you'll always have certain comments for your files, e.g., "artist" or "title," consider using String.to_existing_atom/1.
   """
 
   @doc """
-  Parses VorbisComment if present. Only loads max_size_chunk_in_bytes into memory instead of the whole file. The default max_size_chunk_in_bytes is 4000 per xiph.org's recommended max header size for streaming. Adjust as needed.
+  Parses VorbisComment if present. Only loads max_size_chunk_in_bytes into memory instead of the whole file. The default max_size_chunk_in_bytes is 4000 per xiph.org's recommended max header size for streaming.
 
   Note that the "format" comment in the example below says MP3 because this Ogg file from archive.org was probably converted from an mp3. The actual mp3 is included too as shown below.
 
@@ -109,7 +105,6 @@ defmodule OggVorbisParser do
          }}
 
       binary_size >= 500 ->
-        # TODO: Should this number be lower?
         {:error, :no_vorbis_comment_found}
 
       true ->
