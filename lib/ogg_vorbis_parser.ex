@@ -5,9 +5,9 @@ defmodule OggVorbisParser do
   While it's possible to use Vorbis streams without Ogg containers or with different kinds of containers, this parser expects Ogg.
 
   The relevant part of an Ogg Vorbis file starts with an Ogg capture pattern (a file signature) followed by some Ogg container bits,
-  the Vorbis identification header, and the Vorbis comment header. This package uses File.stream!/3 instead of File.read/1 to avoid loading entire audio files into memory.
+  the Vorbis identification header, and the Vorbis comment header.
 
-  OggVorbisParser looks for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
+  OggVorbisParser uses File.stream!/3 instead of File.read/1 to avoid loading entire audio files into memory.
   """
 
   @doc """
