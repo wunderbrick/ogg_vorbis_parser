@@ -7,7 +7,7 @@ defmodule OggVorbisParser do
   with video streams and Vorbis streams, but this hasn't been tested enough.
 
   The relevant part of an Ogg Vorbis file starts with an Ogg capture pattern (a file signature) followed by some Ogg container bits,
-  the Vorbis identification header, and the Vorbis comment header.
+  the Vorbis identification header, and the Vorbis comment header. This package uses File.stream!/3 instead of File.read/1 to avoid loading entire audio files into memory.
 
   OggVorbisParser looks for a comment header packet type of 3 immediately followed by the string "vorbis." This is the beginning of the comment header.
 
@@ -15,7 +15,7 @@ defmodule OggVorbisParser do
   """
 
   @doc """
-  Parses VorbisComment if present.
+  Parses VorbisComment if present. Only loads max_size_chunk_in_bytes into memory instead of the whole file. The default max_size_chunk_in_bytes is 4000 per xiph.org's recommended max header size for streaming. Adjust as needed.
 
   Note that the "format" comment in the example below says MP3 because this Ogg file from archive.org was probably converted from an mp3. The actual mp3 is included too as shown below.
 
@@ -57,30 +57,32 @@ defmodule OggVorbisParser do
       :no_ogg_container_found
 
   """
-  @spec parse(bitstring()) :: {:ok, map()} | {:error, :atom}
-  def parse(filename) do
-    case File.read(filename) do
-      {:ok, bitstring} ->
-        <<
-          capture_pattern::binary-size(4),
-          _rest::bitstring
-        >> = bitstring
+  @spec parse(bitstring(), integer()) :: {:ok, map()} | {:error, :atom}
+  def parse(bitstring, max_size_chunk_in_bytes \\ 4000) do
+    # Just look for the header in this chunk and if not found return an error.
+    bitstring
+    |> File.stream!([], max_size_chunk_in_bytes)
+    |> Enum.find(fn bitstring -> bitstring end)
+    |> parse_capture_pattern()
+  end
 
-        case capture_pattern do
-          "OggS" ->
-            find_comment_header(bitstring, 1)
+  @spec parse_capture_pattern(bitstring()) :: {:ok, map()} | {:error, :atom}
+  defp parse_capture_pattern(bitstring) do
+    <<
+      capture_pattern::binary-size(4),
+      _rest::bitstring
+    >> = bitstring
 
-          _ ->
-            {:error, :no_ogg_container_found}
-        end
+    case capture_pattern do
+      "OggS" ->
+        find_comment_header(bitstring, 1)
 
-      {:error, reason} ->
-        {:error, reason}
+      _ ->
+        {:error, :no_ogg_container_found}
     end
   end
 
-  @spec find_comment_header(bitstring(), integer()) ::
-          {:ok, map()} | {:error, :atom}
+  @spec find_comment_header(bitstring(), integer()) :: {:ok, map()} | {:error, :atom}
   defp find_comment_header(bitstring, binary_size) do
     <<
       _ogg_container_and_vorbis_id_header::binary-size(binary_size),
@@ -107,6 +109,7 @@ defmodule OggVorbisParser do
          }}
 
       binary_size >= 500 ->
+        # TODO: Should this number be lower?
         {:error, :no_vorbis_comment_found}
 
       true ->

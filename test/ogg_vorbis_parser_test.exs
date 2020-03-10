@@ -55,4 +55,10 @@ defmodule OggVorbisParserTest do
 
     assert capture_pattern != "OggS"
   end
+
+  test "parse mp3" do
+    assert OggVorbisParser.parse(
+             "test/audio_files/lifeandtimesoffrederickdouglass_01_douglass_128kb.mp3"
+           ) == {:error, :no_ogg_container_found}
+  end
 end

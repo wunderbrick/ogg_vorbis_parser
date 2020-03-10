@@ -9,10 +9,12 @@ The package can be installed by adding `ogg_vorbis_parser` to your list of depen
 ```elixir
 def deps do
   [
-    {:ogg_vorbis_parser, "~> 1.0.0"}
+    {:ogg_vorbis_parser, "~> 2.0.0"}
   ]
 end
 ```
+
+This parser only loads 4000 byte chunks into memory by default (xiph.org's recommended max for streaming). You can pass in more bytes if you need to though.
 
 Note that the "format" comment in the example below says MP3 because this Ogg file from archive.org was probably converted from an mp3. The actual mp3 is included too as shown below.
 
