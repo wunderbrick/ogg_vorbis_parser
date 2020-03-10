@@ -8,7 +8,7 @@ defmodule OggVorbisParser.MixProject do
       source_url: "https://github.com/wunderbrick/ogg_vorbis_parser",
       description: description(),
       package: package(),
-      version: "1.0.0",
+      version: "2.0.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps()
